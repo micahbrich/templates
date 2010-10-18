@@ -16,6 +16,7 @@ puts "Any problems? See http://github.com/fortuity/rails3-mongoid-devise/issues"
 # Configure
 #----------------------------------------------------------------------------
 
+project_name = RAILS.root.split('/').last
 
 if yes?('Would you like to use the Haml template system? (yes/no)')
   haml_flag = true
@@ -61,6 +62,56 @@ run 'touch README'
 puts "banning spiders from your site by changing robots.txt..."
 gsub_file 'public/robots.txt', /# User-Agent/, 'User-Agent'
 gsub_file 'public/robots.txt', /# Disallow/, 'Disallow'
+
+
+#----------------------------------------------------------------------------
+# Set up rvmrc
+#----------------------------------------------------------------------------
+puts "setting up rvmrc & gemset"
+end
+create_file '.rvmrc' do
+  "rvm --create use default@#{project_name} > /dev/null"
+end
+
+#----------------------------------------------------------------------------
+# Set up rvmrc
+#----------------------------------------------------------------------------
+create_file "config/setup_load_paths.rb" do <<-FILE
+  
+  # BUNDLR - SET UP LOAD PATHS
+
+  if ENV['MY_RUBY_HOME'] && ENV['MY_RUBY_HOME'].include?('rvm')
+    begin
+      rvm_path     = File.dirname(File.dirname(ENV['MY_RUBY_HOME']))
+      rvm_lib_path = File.join(rvm_path, 'lib')
+      $LOAD_PATH.unshift rvm_lib_path
+      require 'rvm'
+      RVM.use_from_path! File.dirname(File.dirname(__FILE__))
+    rescue LoadError
+      # RVM is unavailable at this point.
+      raise "RVM ruby lib is currently unavailable."
+    end
+  end
+
+  # Select the correct item for which you use below.
+  # If you're not using bundler, remove it completely.
+
+  # If we're using a Bundler 1.0 beta
+  ENV['BUNDLE_GEMFILE'] = File.expand_path('../Gemfile', File.dirname(__FILE__))
+  require 'bundler/setup'
+
+  # Or Bundler 0.9...
+  ## if File.exist?(".bundle/environment.rb")
+  ##   require '.bundle/environment'
+  ## else
+  ##   require 'rubygems'
+  ##   require 'bundler'
+  ##   Bundler.setup
+  ## end
+  
+  FILE
+end
+
 
 #----------------------------------------------------------------------------
 # Heroku Option
@@ -201,9 +252,10 @@ puts "adding a 'name' attribute to the User model"
 gsub_file 'app/models/user.rb', /end/ do
 <<-RUBY
   field :name
-  validates_presence_of :name
-  validates_uniqueness_of :name, :email, :case_sensitive => false
-  attr_accessible :name, :email, :password, :password_confirmation, :remember_me
+  field :username
+  validates_presence_of :name, :username
+  validates_uniqueness_of :name, :username, :email, :case_sensitive => false
+  attr_accessible :name, :username, :email, :password, :password_confirmation, :remember_me
 end
 RUBY
 end
@@ -226,6 +278,9 @@ else
 <<-RUBY
   <p><%= f.label :name %><br />
   <%= f.text_field :name %></p>
+  
+  <p><%= f.label :username %><br />
+  <%= f.text_field :username %></p>
 RUBY
    end
 end
@@ -244,6 +299,9 @@ else
 <<-RUBY
   <p><%= f.label :name %><br />
   <%= f.text_field :name %></p>
+  
+  <p><%= f.label :username %><br />
+  <%= f.text_field :username %></p>
 RUBY
    end
 end
@@ -426,7 +484,7 @@ append_file 'db/seeds.rb' do <<-FILE
 puts 'EMPTY THE MONGODB DATABASE'
 Mongoid.master.collections.reject { |c| c.name == 'system.indexes'}.each(&:drop)
 puts 'SETTING UP DEFAULT USER LOGIN'
-user = User.create! :name => 'First User', :email => 'user@test.com', :password => 'please', :password_confirmation => 'please'
+user = User.create! :name => 'First User', :username => 'first-user', :email => 'user@test.com', :password => 'please', :password_confirmation => 'please'
 puts 'New user created: ' << user.name
 FILE
 end
