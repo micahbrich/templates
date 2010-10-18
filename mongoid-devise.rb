@@ -16,7 +16,7 @@ puts "Any problems? See http://github.com/fortuity/rails3-mongoid-devise/issues"
 # Configure
 #----------------------------------------------------------------------------
 
-project_name = RAILS.root.split('/').last
+project_name = destination_root
 
 if yes?('Would you like to use the Haml template system? (yes/no)')
   haml_flag = true
