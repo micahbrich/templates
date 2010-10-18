@@ -68,7 +68,6 @@ gsub_file 'public/robots.txt', /# Disallow/, 'Disallow'
 # Set up rvmrc
 #----------------------------------------------------------------------------
 puts "setting up rvmrc & gemset"
-end
 create_file '.rvmrc' do
   "rvm --create use default@#{project_name} > /dev/null"
 end
