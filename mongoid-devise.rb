@@ -16,7 +16,7 @@ puts "Any problems? See http://github.com/fortuity/rails3-mongoid-devise/issues"
 # Configure
 #----------------------------------------------------------------------------
 
-project_name = destination_root
+project_name = destination_root.split('/').last
 
 if yes?('Would you like to use the Haml template system? (yes/no)')
   haml_flag = true
@@ -149,7 +149,9 @@ append_file 'Gemfile', "\n# Bundle gems needed for Mongoid\n"
 gem "mongoid", "2.0.0.beta.19"
 gem "bson_ext", "1.1.1"
 
-puts "installing Mongoid gems (takes a few minutes!)..."
+
+run "rvm --create use default@#{project_name} > /dev/null"
+puts "installing gems (takes a few minutes!)..."
 run 'bundle install'
 
 puts "creating 'config/mongoid.yml' Mongoid configuration file..."
