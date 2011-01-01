@@ -125,7 +125,7 @@ end
 # jQuery Option
 #----------------------------------------------------------------------------
 if jquery_flag
-  gem 'jquery-rails', '0.1.3'
+  gem 'jquery-rails'
 end
 
 #----------------------------------------------------------------------------
@@ -191,7 +191,7 @@ if jquery_flag
   run 'rm public/javascripts/rails.js'
   puts "replacing Prototype with jQuery"
   # "--ui" enables optional jQuery UI
-  run 'rails generate jquery:install --ui'
+  run 'rails generate jquery:install'
 end
 
 #----------------------------------------------------------------------------
@@ -200,7 +200,7 @@ end
 if devise_flag
   puts "setting up Gemfile for Devise..."
   append_file 'Gemfile', "\n# Bundle gem needed for Devise\n"
-  gem 'devise', '1.1.3'
+  gem 'devise'
   
   puts "installing Devise gem (takes a few minutes!)..."
   run 'bundle install'
@@ -389,7 +389,7 @@ if devise_flag
   puts 'EMPTY THE MONGODB DATABASE'
   Mongoid.master.collections.reject { |c| c.name == 'system.indexes'}.each(&:drop)
   puts 'SETTING UP DEFAULT USER LOGIN'
-  user = User.create! :name => 'First User', :username => 'first-user', :email => 'user@test.com', :password => 'please', :password_confirmation => 'please'
+  user = User.create! :name => 'Micah Rich', :username => 'moocha', :email => 'micah@micahrich.com', :password => 'russell', :password_confirmation => 'russell'
   puts 'New user created: ' << user.name
   FILE
   end
